@@ -3,6 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// Імпорт маршрутів якості повітря
+const airQualityRoutes = require('./routes/airQualityRoutes');
+
 const app = express();
 
 // Middleware
@@ -21,6 +24,9 @@ mongoose.connect(mongoUri)
 app.get('/', (req, res) => {
   res.json({ message: 'Eco Monitoring API працює!' });
 });
+
+// Підключення маршрутів для CRUD-операцій якості повітря
+app.use('/api/airquality', airQualityRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
