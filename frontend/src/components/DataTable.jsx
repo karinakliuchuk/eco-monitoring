@@ -1,6 +1,6 @@
 import React from 'react';
 
-function DataTable({ data, loading, error }) {
+function DataTable({ data, loading, error, onDelete, onEdit }) {
   if (loading) {
     return <div style={statusStyle}>SYSTEM_LOADING // CONNECTING_TO_NODES...</div>;
   }
@@ -17,7 +17,7 @@ function DataTable({ data, loading, error }) {
             [ NO_DATA_DETECTED ]
           </div>
           <p style={{ color: '#8a99ad', fontSize: '1rem', margin: 0, lineHeight: '1.6' }}>
-            База даних не містить записів. Скористайтеся формою нижче, щоб додати першу станцію моніторингу повітря.
+            База даних не містить записів. Скористайтеся формою вище, щоб додати першу станцію моніторингу повітря.
           </p>
         </div>
       </div>
@@ -42,6 +42,7 @@ function DataTable({ data, loading, error }) {
               <th style={thStyle}>PM10</th>
               <th style={thStyle}>NO₂</th>
               <th style={thStyle}>TIMESTAMP</th>
+              <th style={thStyle}>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +62,16 @@ function DataTable({ data, loading, error }) {
                 <td style={tdStyle}>{item.pollutants?.no2 ?? '-'} μg/m³</td>
                 <td style={tdMutedStyle}>
                   {item.measured_at ? new Date(item.measured_at).toLocaleString('uk-UA') : '-'}
+                </td>
+                <td style={tdStyle}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => onEdit(item)} style={editBtnStyle}>
+                      РЕДАГ.
+                    </button>
+                    <button onClick={() => onDelete(item._id)} style={deleteBtnStyle}>
+                      ВИДАЛИТИ
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -105,6 +116,26 @@ const cyberCardStyle = {
   boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
   width: '100%',
   boxSizing: 'border-box'
+};
+const editBtnStyle = {
+  backgroundColor: 'rgba(255, 187, 0, 0.1)',
+  border: '1px solid #ffbb00',
+  color: '#ffbb00',
+  padding: '5px 10px',
+  borderRadius: '4px',
+  fontFamily: 'inherit',
+  fontSize: '0.75rem',
+  cursor: 'pointer'
+};
+const deleteBtnStyle = {
+  backgroundColor: 'rgba(255, 0, 85, 0.1)',
+  border: '1px solid #ff0055',
+  color: '#ff0055',
+  padding: '5px 10px',
+  borderRadius: '4px',
+  fontFamily: 'inherit',
+  fontSize: '0.75rem',
+  cursor: 'pointer'
 };
 
 export default DataTable;
