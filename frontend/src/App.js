@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import DataTable from './components/DataTable';
+import AddStationForm from './components/AddStationForm';
+
+const API_URL = 'http://localhost:3001/api/airquality';
 
 function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editingItem, setEditingItem] = useState(null);
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  // READ (GET)
   const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('http://localhost:3001/api/airquality');
+      const response = await fetch(API_URL);
       
       if (!response.ok) {
         throw new Error(`Помилка HTTP: ${response.status}`);
@@ -29,9 +34,64 @@ function App() {
     }
   };
 
+  // CREATE (POST)
+  const handleAddStation = async (newStation) => {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newStation)
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Помилка створення запису');
+    }
+
+    // Додаємо новий запис на початок списку у стані
+    setData((prevData) => [result.data, ...prevData]);
+  };
+
+  // UPDATE (PUT)
+  const handleUpdateStation = async (id, updatedStation) => {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedStation)
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Помилка оновлення запису');
+    }
+
+    // Оновлюємо змінений запис у загальному стані
+    setData((prevData) =>
+      prevData.map((item) => (item._id === id ? result.data : item))
+    );
+    setEditingItem(null);
+  };
+
+  // DELETE (DELETE)
+  const handleDeleteStation = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/${id}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.error || 'Помилка видалення запису');
+      }
+
+      // Видаляємо запис зі стану
+      setData((prevData) => prevData.filter((item) => item._id !== id));
+    } catch (err) {
+      alert(`Помилка при видаленні: ${err.message}`);
+    }
+  };
+
   return (
     <div style={cyberBackgroundStyle}>
-      {/* Широкий засклений Header */}
       <header style={glassHeaderStyle}>
         <div style={headerContentStyle}>
           <div>
@@ -43,13 +103,24 @@ function App() {
       </header>
 
       <main style={{ padding: '40px 0' }}>
-        <DataTable data={data} loading={loading} error={error} />
+        <AddStationForm
+          onAdd={handleAddStation}
+          onUpdate={handleUpdateStation}
+          editingItem={editingItem}
+          onCancelEdit={() => setEditingItem(null)}
+        />
+        <DataTable
+          data={data}
+          loading={loading}
+          error={error}
+          onDelete={handleDeleteStation}
+          onEdit={(item) => setEditingItem(item)}
+        />
       </main>
     </div>
   );
 }
 
-// Чистий темний кібер-фон БЕЗ сітки
 const cyberBackgroundStyle = {
   backgroundColor: '#07090e',
   backgroundImage: 'radial-gradient(circle at 50% -10%, rgba(0, 243, 255, 0.15) 0%, transparent 70%)',
@@ -58,14 +129,13 @@ const cyberBackgroundStyle = {
   color: '#e0e6ed'
 };
 
-// Ширша шапка
 const glassHeaderStyle = {
   backgroundColor: 'rgba(12, 14, 22, 0.75)',
   backdropFilter: 'blur(16px)',
   WebkitBackdropFilter: 'blur(16px)',
   borderBottom: '1px solid rgba(0, 243, 255, 0.25)',
   boxShadow: '0 8px 32px rgba(0, 243, 255, 0.12)',
-  padding: '32px 40px', // Збільшені відступи
+  padding: '32px 40px',
   position: 'sticky',
   top: 0,
   zIndex: 100
