@@ -10,6 +10,10 @@ const initialFormState = {
   no2: ''
 };
 
+// Дозволяємо лише українські/латинські літери, пробіли, апостроф та дефіс
+const CITY_INPUT_REGEX = /^[а-яА-ЯіїєґІЇЄҐa-zA-Z\s'’-]*$/;
+const CITY_SUBMIT_REGEX = /^[а-яА-ЯіїєґІЇЄҐa-zA-Z\s'’-]+$/;
+
 function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
   const [formData, setFormData] = useState(initialFormState);
   const [submitting, setSubmitting] = useState(false);
@@ -33,9 +37,18 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
     }
   }, [editingItem]);
 
-  // Обробник зміни тексту в інпутах (керовані компоненти)
+  // Обробник зміни тексту в інпутах (керовані компоненти + блокування некоректних символів у місті)
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === 'city') {
+      if (!CITY_INPUT_REGEX.test(value)) {
+        setFormError('Назва міста може містити лише літери, пробіли, дефіс або апостроф (цифри та спецсимволи заборонені)');
+        return;
+      }
+      setFormError(null);
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -47,22 +60,52 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
     e.preventDefault();
     setFormError(null);
 
-    if (!formData.station_name || !formData.city || formData.latitude === '' || formData.longitude === '' || formData.pm25 === '') {
+    const trimmedStation = formData.station_name.trim();
+    const trimmedCity = formData.city.trim();
+
+    if (
+      !trimmedStation ||
+      !trimmedCity ||
+      formData.latitude === '' ||
+      formData.longitude === '' ||
+      formData.pm25 === ''
+    ) {
       setFormError('Заповніть усі обов\'язкові поля (Назва, Місто, Координати, PM2.5)');
       return;
     }
 
+    if (!CITY_SUBMIT_REGEX.test(trimmedCity)) {
+      setFormError('Назва міста може містити лише літери, пробіли, дефіс або апостроф (без цифр і спецсимволів)');
+      return;
+    }
+
+    const lat = parseFloat(formData.latitude);
+    const lon = parseFloat(formData.longitude);
+    const pm25 = parseFloat(formData.pm25);
+    const pm10 = formData.pm10 !== '' ? parseFloat(formData.pm10) : undefined;
+    const no2 = formData.no2 !== '' ? parseFloat(formData.no2) : undefined;
+
+    if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      setFormError('Координати поза допустимими межами (широта: від -90 до 90, довгота: від -180 до 180)');
+      return;
+    }
+
+    if (pm25 < 0 || (pm10 !== undefined && pm10 < 0) || (no2 !== undefined && no2 < 0)) {
+      setFormError('Показники забруднення (PM2.5, PM10, NO₂) не можуть бути від\'ємними');
+      return;
+    }
+
     const payload = {
-      station_name: formData.station_name.trim(),
-      city: formData.city.trim(),
+      station_name: trimmedStation,
+      city: trimmedCity,
       location: {
-        latitude: parseFloat(formData.latitude),
-        longitude: parseFloat(formData.longitude)
+        latitude: lat,
+        longitude: lon
       },
       pollutants: {
-        pm25: parseFloat(formData.pm25),
-        pm10: formData.pm10 !== '' ? parseFloat(formData.pm10) : undefined,
-        no2: formData.no2 !== '' ? parseFloat(formData.no2) : undefined
+        pm25,
+        pm10,
+        no2
       }
     };
 
@@ -127,6 +170,8 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
             <input
               type="number"
               step="any"
+              min="-90"
+              max="90"
               name="latitude"
               placeholder="50.4495"
               value={formData.latitude}
@@ -140,6 +185,8 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
             <input
               type="number"
               step="any"
+              min="-180"
+              max="180"
               name="longitude"
               placeholder="30.4564"
               value={formData.longitude}
@@ -153,6 +200,7 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
             <input
               type="number"
               step="any"
+              min="0"
               name="pm25"
               placeholder="18.4"
               value={formData.pm25}
@@ -166,6 +214,7 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
             <input
               type="number"
               step="any"
+              min="0"
               name="pm10"
               placeholder="32.1"
               value={formData.pm10}
@@ -179,6 +228,7 @@ function AddStationForm({ onAdd, onUpdate, editingItem, onCancelEdit }) {
             <input
               type="number"
               step="any"
+              min="0"
               name="no2"
               placeholder="12.5"
               value={formData.no2}
