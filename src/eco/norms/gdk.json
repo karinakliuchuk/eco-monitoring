@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "description": "ГДК та граничні величини забруднюючих речовин в атмосферному повітрі",
+    "sources": [
+      "Наказ МОЗ України від 14.01.2020 № 52",
+      "Постанова КМУ від 14.08.2019 № 827"
+    ],
+    "valid_from": "2020-01-14"
+  },
+  "substances": {
+    "PM2.5": {
+      "name": "Тверді частинки ТЧ2,5",
+      "unit": "ug/m3",
+      "gdk_mr": 160,
+      "gdk_sd": 35,
+      "limit_annual": 25,
+      "hazard_class": 3,
+      "source": "Наказ МОЗ № 52; ПКМУ № 827 (додаток 1)",
+      "valid_from": "2020-01-14"
+    },
+    "PM10": {
+      "name": "Тверді частинки ТЧ10",
+      "unit": "ug/m3",
+      "gdk_mr": 300,
+      "gdk_sd": 50,
+      "limit_24h": 50,
+      "max_exceedances_year": 35,
+      "limit_annual": 40,
+      "hazard_class": 3,
+      "source": "Наказ МОЗ № 52; ПКМУ № 827 (додаток 1)",
+      "valid_from": "2020-01-14"
+    },
+    "NO2": {
+      "name": "Діоксид азоту",
+      "unit": "ug/m3",
+      "gdk_mr": 200,
+      "gdk_sd": 40,
+      "limit_annual": 40,
+      "hazard_class": 2,
+      "source": "Наказ МОЗ від 14.01.2020 № 52",
+      "valid_from": "2020-01-14"
+    },
+    "SO2": {
+      "name": "Діоксид сірки",
+      "unit": "ug/m3",
+      "gdk_mr": 500,
+      "gdk_sd": 50,
+      "hazard_class": 3,
+      "source": "Наказ МОЗ від 14.01.2020 № 52",
+      "valid_from": "2020-01-14"
+    },
+    "O3": {
+      "name": "Озон",
+      "unit": "ug/m3",
+      "gdk_mr": 160,
+      "gdk_sd": 30,
+      "limit_8h": 120,
+      "hazard_class": 1,
+      "source": "Наказ МОЗ № 52; ПКМУ № 827 (додаток 2)",
+      "valid_from": "2020-01-14"
+    },
+    "CO": {
+      "name": "Оксид вуглецю",
+      "unit": "mg/m3",
+      "gdk_mr": 5,
+      "gdk_sd": 3,
+      "limit_8h": 10,
+      "hazard_class": 4,
+      "source": "Наказ МОЗ № 52; ПКМУ № 827 (додаток 1)",
+      "valid_from": "2020-01-14"
+    }
+  }
+}
