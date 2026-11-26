@@ -2,6 +2,7 @@
 import DataTable from './components/DataTable';
 import AddStationForm from './components/AddStationForm';
 import StationDashboard from './components/StationDashboard';
+import DispersionForm from './components/DispersionForm';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const API_URL = `${BASE_URL}/api/airquality`;
@@ -9,7 +10,6 @@ const API_URL = `${BASE_URL}/api/airquality`;
 function App() {
   const [activeTab, setActiveTab] = useState('lab3');
   const [annualSnapshot, setAnnualSnapshot] = useState(null);
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -78,7 +78,6 @@ function App() {
             <h1 style={titleStyle}>AIR_QUALITY // MONITORING_SYSTEM</h1>
             <span style={subtitleStyle}>NETWORK_STATUS: ONLINE // LAB_03_EDITION</span>
           </div>
-
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button
               onClick={() => setActiveTab('lab3')}
@@ -105,17 +104,7 @@ function App() {
               year={2025}
               onAnnualLoaded={(snapshot) => setAnnualSnapshot(snapshot)}
             />
-            <div style={{ maxWidth: '1200px', margin: '24px auto 0', padding: '0 20px' }}>
-              <div style={{
-                border: '1px dashed rgba(0, 243, 255, 0.3)',
-                borderRadius: '10px',
-                padding: '20px',
-                color: '#6272a4',
-                textAlign: 'center'
-              }}>
-                [ МОДУЛЬ РОЗСІЮВАННЯ ОНД-86 (ВАРІАНТ 7) — ОЧІКУЄ ІНТЕГРАЦІЇ КОМПОНЕНТА ЧАСТИНИ Б ]
-              </div>
-            </div>
+            <DispersionForm annualSnapshot={annualSnapshot} />
           </>
         ) : (
           <>

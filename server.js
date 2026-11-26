@@ -3,9 +3,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// Імпорт маршрутів якості повітря (ЛР 1-2) та екологічної статистики (ЛР 3)
+// Імпорт маршрутів якості повітря (ЛР 1-2), екологічної статистики (ЛР 3 Ч.А) та ОНД-86 (ЛР 3 Ч.Б)
 const airQualityRoutes = require('./routes/airQualityRoutes');
 const ecoStatsRoutes = require('./routes/ecoStatsRoutes');
+const v7Routes = require('./routes/v7Routes');
 
 const app = express();
 
@@ -26,9 +27,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Eco Monitoring API працює!' });
 });
 
-// Підключення маршрутів для CRUD-операцій якості повітря та аналітики ЛР 3
+// Підключення маршрутів
 app.use('/api/airquality', airQualityRoutes);
 app.use('/api/eco', ecoStatsRoutes);
+app.use('/api/v7', v7Routes);
 
 const PORT = process.env.PORT || 3001;
 if (require.main === module) {
