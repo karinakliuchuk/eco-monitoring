@@ -1,0 +1,48 @@
+{
+  "version": "2026-01-01",
+  "method": "Методика розрахунку концентрацій в атмосферному повітрі шкідливих речовин, що містяться у викидах підприємств (ОНД-86)",
+  "source": "ОНД-86 (Держкомгідромет, 1986), розд. 2; ДСТУ-Н Б В.1.1-27:2010 «Будівельна кліматологія»",
+  "valid_from": "1986-08-04",
+  "regions": {
+    "Kyiv": {
+      "name": "м. Київ та Київська область",
+      "A": 180,
+      "T_air_max_avg_c": 25.6,
+      "eta_flat": 1.0,
+      "source": "ОНД-86, п. 2.2; ДСТУ-Н Б В.1.1-27:2010, табл. 2",
+      "valid_from": "2011-11-01"
+    }
+  },
+  "substance_types": {
+    "NO2": "gas",
+    "SO2": "gas",
+    "CO": "gas",
+    "O3": "gas",
+    "PM10": "dust",
+    "PM2.5": "dust"
+  },
+  "sedimentation_F": {
+    "gas": 1,
+    "dust_cleaning_gte_90": 2,
+    "dust_cleaning_75_to_90": 2.5,
+    "dust_cleaning_lt_75": 3,
+    "source": "ОНД-86, п. 2.5",
+    "valid_from": "1986-08-04"
+  },
+  "default_source_kyiv": {
+    "enterprise": "Котельня / ТЕЦ м. Києва (дані з порталу «ЕкоСистема»)",
+    "H": 40,
+    "D": 1.2,
+    "w0": 8.0,
+    "T_gas": 135,
+    "T_air": 25.6,
+    "A": 180,
+    "eta": 1,
+    "cleaning_efficiency": 92,
+    "emissions": [
+      { "pollutant": "NO2", "M": 12.0, "background_mg_m3": 0.045 },
+      { "pollutant": "SO2", "M": 18.5, "background_mg_m3": 0.025 },
+      { "pollutant": "PM10", "M": 4.2, "background_mg_m3": 0.060 }
+    ]
+  }
+}
